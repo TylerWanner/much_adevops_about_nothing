@@ -1,0 +1,38 @@
+name: e2e
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+jobs:
+  test:
+    name: Run pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+      - run: pytest tests/foo.py
+  publish:
+    name: Deploy to instance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+      
+      - name: 'Create dist'
+        run: 'tar -zcvf ${GITHUB_REF}.tar.gz main.py requirements.txt'
+
+      - name: 'Use gcloud CLI'
+        run: 'gsutil cp ${GITHUB_REF}.tar.gz gs://maan-artifacts/'
