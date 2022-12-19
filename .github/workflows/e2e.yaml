@@ -19,7 +19,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pytest tests/foo.py
   publish:
-    name: Deploy to instance
+    name: Publish App to GCS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,8 +31,24 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
       
-      - name: 'Create dist'
-        run: 'tar -zcvf ${GITHUB_REF}.tar.gz main.py requirements.txt'
+      - id: 'upload-file'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'main.py'
+          destination: 'maan-artifacts/${GITHUB_REF_NAME}/'
 
-      - name: 'Use gcloud CLI'
-        run: 'gsutil cp ${GITHUB_REF}.tar.gz gs://maan-artifacts/'
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_KEY }}'
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.6
+      - id: plan
+        run: cd infrastructure/maan && terraform init && terraform plan -no-color
+      
