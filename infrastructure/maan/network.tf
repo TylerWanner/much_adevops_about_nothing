@@ -7,23 +7,23 @@ module "vpc" {
   routing_mode = "GLOBAL"
 
   subnets = [
-      {
-          subnet_name           = "main"
-          subnet_ip             = "10.10.10.0/24"
-          subnet_region         = var.region
-      },
+    {
+      subnet_name   = "main"
+      subnet_ip     = "10.10.10.0/24"
+      subnet_region = var.region
+    },
   ]
 
   secondary_ranges = {}
 
   routes = [
-      {
-          name                   = "egress-internet"
-          description            = "route through IGW to access internet"
-          destination_range      = "0.0.0.0/0"
-          tags                   = "egress-inet"
-          next_hop_internet      = "true"
-      }
+    {
+      name              = "egress-internet"
+      description       = "route through IGW to access internet"
+      destination_range = "0.0.0.0/0"
+      tags              = "egress-inet"
+      next_hop_internet = "true"
+    }
   ]
 }
 module "cloud_router" {
@@ -56,7 +56,7 @@ module "firewall_rules" {
     target_service_accounts = null
     allow = [{
       protocol = "tcp"
-      ports    = ["22","8080"]
+      ports    = ["22", "8080"]
     }]
     deny = []
     log_config = {

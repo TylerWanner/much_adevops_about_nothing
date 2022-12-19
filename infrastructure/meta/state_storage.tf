@@ -8,11 +8,11 @@ module "bucket" {
 }
 
 module "service_accounts" {
-  source        = "terraform-google-modules/service-accounts/google"
-  version       = "~> 4.1"
-  project_id    = var.project_id
-  prefix        = "terraform-admin"
-  names         = ["maan"]
+  source     = "terraform-google-modules/service-accounts/google"
+  version    = "~> 4.1"
+  project_id = var.project_id
+  prefix     = "terraform-admin"
+  names      = ["maan"]
   project_roles = [
     # "${var.project_id}=>roles/storage.admin",
     # "${var.project_id}=>roles/iam.serviceAccountAdmin",
@@ -23,7 +23,7 @@ module "service_accounts" {
   generate_keys = true
 }
 
-output "key" { 
-  value = jsondecode(module.service_accounts.key)
+output "key" {
+  value     = jsondecode(module.service_accounts.key)
   sensitive = true
 }

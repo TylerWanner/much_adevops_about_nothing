@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = "maan-terraform-admin"
-    prefix  = "maan"
+    bucket = "maan-terraform-admin"
+    prefix = "maan"
   }
 } 

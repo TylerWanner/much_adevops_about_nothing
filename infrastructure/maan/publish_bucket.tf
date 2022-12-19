@@ -7,7 +7,7 @@ module "bucket" {
   location   = "us-east1"
   iam_members = [
     {
-      role = "roles/storage.admin"
+      role   = "roles/storage.admin"
       member = "serviceAccount:${module.service_accounts.email}"
     }
   ]
