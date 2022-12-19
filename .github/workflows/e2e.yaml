@@ -35,7 +35,7 @@ jobs:
         uses: 'google-github-actions/upload-cloud-storage@v1'
         with:
           path: 'main.py'
-          destination: 'maan-artifacts/${GITHUB_REF_NAME}/'
+          destination: 'maan-artifacts/${{ env.GITHUB_REF_NAME }}/'
 
   deploy:
     name: Deploy
