@@ -5,8 +5,9 @@ module "instance_template" {
   subnetwork      = module.vpc.subnets["${var.region}/main"].self_link
   service_account = {
     email = module.service_accounts.email
-    scopes = []
+    scopes = ["cloud-platform"]
   }
+  startup_script = "gsutil cp gs://maan-artifacts//main.py . && sudo yum install -y python3 && sudo pip3 install flask && sudo python3 main.py"
 }
 
 module "compute_instance" {
@@ -19,5 +20,15 @@ module "compute_instance" {
   instance_template   = module.instance_template.self_link
   deletion_protection = false
 
-  access_config = []
+  access_config = [
+    {
+      nat_ip = null
+      network_tier = "STANDARD"
+    }
+  ]
+}
+
+output "compute_instance_ip" {
+  value = module.compute_instance.instances_details
+  sensitive = true
 }
